@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: sqs-sub
+
+  cloud:
+    aws:
+      endpoint: http://localhost:4566
+      credentials:
+        access-key: localstack
+        secret-key: localstack
+      region:
+        static: ${AWS_REGION:us-west-2}
+
+server:
+  port: ${APPLICATION_PORT:8086}
+
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: [ 'health', 'metrics', 'info' ]
+  endpoint:
+    health:
+      enabled: true
+    metrics:
+      enabled: true
+    info:
+      enabled: true
+
+application:
+  sqs:
+    queues:
+      order-processing: order-processing_queue

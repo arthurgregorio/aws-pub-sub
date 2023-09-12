@@ -1,0 +1,40 @@
+version: "3.7"
+
+services:
+  mongo:
+    container_name: db-pub-sub
+    image: mongo:6
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_DATABASE: sns_pubs
+      MONGO_INITDB_ROOT_USERNAME: sa_sns_pub
+      MONGO_INITDB_ROOT_PASSWORD: sa_sns_pub
+    networks:
+      - default
+
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack-pub-sub
+    ports:
+      - "4566:4566"
+      - "4510-4559:4510-4559"
+    environment:
+      - DEBUG=1
+      - SERVICES=sns,sqs
+      - AWS_DEFAULT_REGION=us-west-2
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - ./src/test/resources/localstack-init.sh:/etc/localstack/init/ready.d/init-aws.sh
+      - localstack-data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - default
+
+volumes:
+  localstack-data:
+    driver: local
+
+networks:
+  default:
+    driver: bridge

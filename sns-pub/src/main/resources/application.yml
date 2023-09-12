@@ -1,0 +1,51 @@
+spring:
+  application.name: sns-pub
+
+  cloud:
+    aws:
+      endpoint: http://localhost:4566
+      credentials:
+        access-key: localstack
+        secret-key: localstack
+      region:
+        static: ${AWS_REGION:us-west-2}
+
+  data:
+    mongodb:
+      uri: mongodb://${DATABASE_USER:sa_sns_pub}:${DATABASE_PASSWORD:sa_sns_pub}@${DATABASE_URI:localhost:27018}
+      database: ${DATABASE_NAME:sns_pub}
+      uuid-representation: standard
+      authentication-database: admin
+
+  jackson:
+    default-property-inclusion: non_null
+    deserialization:
+      read_unknown_enum_values_as_null: true
+    serialization:
+      write-dates-as-timestamps: true
+
+server:
+  port: 8085
+
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: [ 'health', 'info', 'metrics' ]
+  endpoint:
+    health:
+      enabled: true
+    info:
+      enabled: true
+    metrics:
+      enabled: true
+
+mongock:
+  migration-scan-package:
+    - br.eti.arthurgregorio.snspub.infrastructure.migrations
+  transactionEnabled: false
+
+sns:
+  order:
+    notification-topic: order-created_notification
